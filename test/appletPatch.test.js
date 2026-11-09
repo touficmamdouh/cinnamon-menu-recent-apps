@@ -5,8 +5,8 @@ const path = require('node:path');
 const { patchApplet } = require('../src/appletPatch');
 const sourceFixture = fs.readFileSync(path.join(__dirname, 'fixtures/applet.js.txt'), 'utf8');
 
-test('patches every expected Cinnamon 6.6.9 applet anchor exactly once', () => {
-    const patched = patchApplet(sourceFixture, '6.6.9');
+test('patches expected applet anchors without requiring a Cinnamon version', () => {
+    const patched = patchApplet(sourceFixture);
 
     assert.match(patched, /require\('\.\/recentApps'\)/);
     assert.match(patched, /RECENT_APPS: 0b1000000/);
@@ -17,18 +17,11 @@ test('patches every expected Cinnamon 6.6.9 applet anchor exactly once', () => {
     assert.match(patched, /\['recent', 'recent-applications', 'favorite'\]/);
 });
 
-test('rejects unsupported Cinnamon versions without mutating the source', () => {
-    const source = sourceFixture;
-
-    assert.throws(() => patchApplet(source, '6.8.0'), /Unsupported Cinnamon version/);
-    assert.equal(source, sourceFixture);
-});
-
 test('rejects missing or duplicate patch anchors', () => {
-    assert.throws(() => patchApplet(sourceFixture.replace('this.recentButton = null;', ''), '6.6.9'), /anchor/);
-    assert.throws(() => patchApplet(sourceFixture + "\nconst AppUtils = require('./appUtils');", '6.6.9'), /exactly once/);
+    assert.throws(() => patchApplet(sourceFixture.replace('this.recentButton = null;', '')), /anchor/);
+    assert.throws(() => patchApplet(sourceFixture + "\nconst AppUtils = require('./appUtils');"), /exactly once/);
 });
 
 test('rejects already-patched input', () => {
-    assert.throws(() => patchApplet(sourceFixture + "\nconst RecentApps = require('./recentApps');", '6.6.9'), /already/);
+    assert.throws(() => patchApplet(sourceFixture + "\nconst RecentApps = require('./recentApps');"), /already/);
 });

@@ -13,7 +13,7 @@ function pathEntryExists(fsApi, targetPath) {
     }
 }
 
-function installRecentApps({ appletDir, helperSourcePath, version, now = new Date(), fsApi = fs }) {
+function installRecentApps({ appletDir, helperSourcePath, now = new Date(), fsApi = fs }) {
     const appletPath = path.join(appletDir, 'applet.js');
     const helperPath = path.join(appletDir, 'recentApps.js');
     const appletStat = fsApi.lstatSync(appletPath);
@@ -27,7 +27,7 @@ function installRecentApps({ appletDir, helperSourcePath, version, now = new Dat
         throw new Error('Recent Applications helper already exists; refusing to overwrite it.');
 
     const original = fsApi.readFileSync(appletPath, 'utf8');
-    const patched = patchApplet(original, version);
+    const patched = patchApplet(original);
     const timestamp = now.toISOString().replace(/[:.]/g, '-');
     const backupBase = `applet.js.bak-recent-applications-${timestamp}`;
     let backupPath = path.join(appletDir, backupBase);

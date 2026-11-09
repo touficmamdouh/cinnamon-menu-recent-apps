@@ -12,7 +12,7 @@ function findLatestBackup(appletDir, fsApi = fs) {
     return backups.length ? path.join(appletDir, backups[0]) : null;
 }
 
-function uninstallRecentApps({ appletDir, backupPath, helperSourcePath, version, fsApi = fs }) {
+function uninstallRecentApps({ appletDir, backupPath, helperSourcePath, fsApi = fs }) {
     const appletPath = path.join(appletDir, 'applet.js');
     const helperPath = path.join(appletDir, 'recentApps.js');
     const resolvedDir = path.resolve(appletDir);
@@ -35,7 +35,7 @@ function uninstallRecentApps({ appletDir, backupPath, helperSourcePath, version,
 
     if (!helper.equals(expectedHelper))
         throw new Error('Installed helper differs from this package; refusing to remove it.');
-    if (patchApplet(original, version) !== current)
+    if (patchApplet(original) !== current)
         throw new Error('Installed applet does not match the selected backup and package patch; refusing to overwrite local changes.');
 
     const tempAppletPath = path.join(appletDir, `.applet.js.restore-${process.pid}-${Math.random().toString(16).slice(2)}`);

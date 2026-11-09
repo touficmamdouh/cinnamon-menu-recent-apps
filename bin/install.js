@@ -9,16 +9,6 @@ const appletDir = '/usr/share/cinnamon/applets/menu@cinnamon.org';
 const helperSourcePath = path.join(__dirname, '..', 'files', 'recentApps.js');
 const appletPath = path.join(appletDir, 'applet.js');
 
-function cinnamonVersion() {
-    const result = spawnSync('cinnamon', ['--version'], { encoding: 'utf8' });
-    if (result.status !== 0)
-        throw new Error(result.stderr || 'Could not determine Cinnamon version.');
-    const match = result.stdout.match(/\bCinnamon\s+(\d+\.\d+\.\d+)\b/);
-    if (!match)
-        throw new Error(`Unrecognized Cinnamon version output: ${result.stdout.trim()}`);
-    return match[1];
-}
-
 function runAsRoot() {
     if (typeof process.getuid === 'function' && process.getuid() === 0)
         return true;
@@ -34,16 +24,15 @@ try {
         process.exit(0);
     }
 
-    const version = cinnamonVersion();
     if (process.argv.includes('--check')) {
         const fs = require('node:fs');
-        patchApplet(fs.readFileSync(appletPath, 'utf8'), version);
-        process.stdout.write(`Cinnamon ${version} is compatible; no files changed.\n`);
+        patchApplet(fs.readFileSync(appletPath, 'utf8'));
+        process.stdout.write('Cinnamon menu structure is compatible; no files changed.\n');
         process.exit(0);
     }
 
     runAsRoot();
-    const backupPath = installRecentApps({ appletDir, helperSourcePath, version });
+    const backupPath = installRecentApps({ appletDir, helperSourcePath });
     process.stdout.write(`Recent Applications installed. Original applet backup: ${backupPath}\n`);
 } catch (error) {
     process.stderr.write(`Installation failed: ${error.message}\n`);

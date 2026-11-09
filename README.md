@@ -4,7 +4,7 @@ Adds a **Recent Applications** category to Cinnamon's built-in Main Menu. It rea
 
 ## Compatibility
 
-- Cinnamon **6.6.9** only. Other versions are intentionally rejected until their applet source has been tested.
+- No Cinnamon version-number whitelist. The installer applies the patch when the installed Main Menu source contains the required anchors.
 - Zeitgeist must be installed and its session service running for recent applications to appear.
 - Node.js is used only by the installer and tests; no Node package dependencies are required.
 - Linux desktop with `pkexec` available for system file access.
@@ -29,7 +29,7 @@ Install the enhancement:
 npm run install-menu
 ```
 
-The installer asks the desktop authorization agent for administrator permission. It validates Cinnamon's version and the exact menu source anchors before changing anything. It creates a timestamped backup beside the applet, then installs the Zeitgeist helper and updates the menu. If validation fails or files were customized, the installer stops without replacing them.
+The installer asks the desktop authorization agent for administrator permission. It validates the Main Menu source anchors before changing anything. It creates a timestamped backup beside the applet, then installs the Zeitgeist helper and updates the menu. Cinnamon versions with a different menu structure are refused safely rather than patched blindly.
 
 Open the Main Menu and choose **Recent Applications**. To make Cinnamon reload the updated menu without logging out, restart the menu applet from Cinnamon's applet settings or log out and back in.
 

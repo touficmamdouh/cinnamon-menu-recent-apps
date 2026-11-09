@@ -1,5 +1,3 @@
-const SUPPORTED_VERSION = '6.6.9';
-
 function replaceOnce(source, before, after, description) {
     const first = source.indexOf(before);
     if (first === -1 || source.indexOf(before, first + before.length) !== -1)
@@ -7,9 +5,7 @@ function replaceOnce(source, before, after, description) {
     return source.slice(0, first) + after + source.slice(first + before.length);
 }
 
-function patchApplet(source, version) {
-    if (version !== SUPPORTED_VERSION)
-        throw new Error(`Unsupported Cinnamon version ${version}; supported version is ${SUPPORTED_VERSION}.`);
+function patchApplet(source) {
     if (source.includes("require('./recentApps')"))
         throw new Error('Recent Applications is already installed.');
 
@@ -138,4 +134,4 @@ function patchApplet(source, version) {
     return patched;
 }
 
-module.exports = { patchApplet, SUPPORTED_VERSION };
+module.exports = { patchApplet };

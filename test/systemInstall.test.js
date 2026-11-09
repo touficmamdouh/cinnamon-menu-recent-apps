@@ -25,27 +25,28 @@ test('backs up the original applet, preserves its mode, and installs the helper'
     const backupPath = installRecentApps({
         appletDir,
         helperSourcePath: helperFile,
-        version: '6.6.9',
         now: new Date('2026-11-10T12:00:00.000Z')
     });
 
     assert.equal(fs.readFileSync(backupPath, 'utf8'), fixture);
     assert.equal(fs.statSync(appletPath).mode & 0o777, 0o751);
     assert.equal(fs.readFileSync(path.join(appletDir, 'recentApps.js'), 'utf8'), helperSource);
-    assert.equal(fs.readFileSync(appletPath, 'utf8'), patchApplet(fixture, '6.6.9'));
+    assert.equal(fs.readFileSync(appletPath, 'utf8'), patchApplet(fixture));
 });
 
-test('refuses unsupported versions and already-patched applets without writing', () => {
+test('refuses incompatible source structure without writing', () => {
     const { appletDir, appletPath, helperFile } = setup();
-    assert.throws(() => installRecentApps({ appletDir, helperSourcePath: helperFile, version: '6.8.0' }), /Unsupported Cinnamon version/);
-    assert.equal(fs.readFileSync(appletPath, 'utf8'), fixture);
+    const incompatibleSource = fixture.replace('this.recentButton = null;', 'this.recentItemsButton = null;');
+    fs.writeFileSync(appletPath, incompatibleSource);
+    assert.throws(() => installRecentApps({ appletDir, helperSourcePath: helperFile }), /anchor/);
+    assert.equal(fs.readFileSync(appletPath, 'utf8'), incompatibleSource);
 
     fs.writeFileSync(path.join(appletDir, 'recentApps.js'), 'unrelated helper');
-    assert.throws(() => installRecentApps({ appletDir, helperSourcePath: helperFile, version: '6.6.9' }), /already exists/);
+    assert.throws(() => installRecentApps({ appletDir, helperSourcePath: helperFile }), /already exists/);
     fs.unlinkSync(path.join(appletDir, 'recentApps.js'));
 
-    fs.writeFileSync(appletPath, patchApplet(fixture, '6.6.9'));
-    assert.throws(() => installRecentApps({ appletDir, helperSourcePath: helperFile, version: '6.6.9' }), /already installed/);
+    fs.writeFileSync(appletPath, patchApplet(fixture));
+    assert.throws(() => installRecentApps({ appletDir, helperSourcePath: helperFile }), /already installed/);
     assert.deepEqual(fs.readdirSync(appletDir).sort(), ['applet.js', 'helper-source.js']);
 });
 
@@ -54,7 +55,7 @@ test('refuses to replace a dangling helper symlink', () => {
     const helperPath = path.join(appletDir, 'recentApps.js');
     fs.symlinkSync(path.join(appletDir, 'does-not-exist'), helperPath);
 
-    assert.throws(() => installRecentApps({ appletDir, helperSourcePath: helperFile, version: '6.6.9' }), /already exists/);
+    assert.throws(() => installRecentApps({ appletDir, helperSourcePath: helperFile }), /already exists/);
     assert.equal(fs.readlinkSync(helperPath), path.join(appletDir, 'does-not-exist'));
     assert.equal(fs.readFileSync(appletPath, 'utf8'), fixture);
 });
@@ -79,7 +80,6 @@ test('rolls back backup and helper if helper installation fails', () => {
     assert.throws(() => installRecentApps({
         appletDir,
         helperSourcePath: helperFile,
-        version: '6.6.9',
         fsApi
     }), /simulated helper install failure/);
     assert.equal(fs.readFileSync(appletPath, 'utf8'), fixture);
