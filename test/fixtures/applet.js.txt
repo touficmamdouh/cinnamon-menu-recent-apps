@@ -1,0 +1,25 @@
+const AppUtils = require('./appUtils');
+const RefreshFlags = Object.freeze({
+    APP:      0b000001,
+    FAV_APP:  0b000010,
+    FAV_DOC:  0b000100,
+    PLACE:    0b001000,
+    RECENT:   0b010000,
+    SYSTEM:   0b100000
+});
+const REFRESH_ALL_MASK = 0b111111;
+        this.recentButton = null;
+        this._recentButtons = [];
+        if ((m & RefreshFlags.RECENT) === RefreshFlags.RECENT)
+            this._refreshRecent();
+        if (this.recentButton) {
+            this.categoriesBox.set_child_at_index(this.recentButton.actor, -1);
+        }
+    _onOpenStateChanged(menu, open) {
+        if (open) {
+            this.actor.add_style_pseudo_class('active');
+        }
+    _refreshFavDocs() {
+    }
+            if (['recent', 'favorite'].includes(b.categoryId))
+                continue;

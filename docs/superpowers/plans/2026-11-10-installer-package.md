@@ -38,7 +38,7 @@
 
 **Interfaces:**
 - Produce: `patchApplet(source, version) -> string`; it returns patched applet source or throws before writes if version/anchors are unsupported, incomplete, duplicated, or already patched.
-- Consume: the currently verified Cinnamon 6.6.9 applet edits and Zeitgeist helper from `/home/t8/cinnamon-menu-recent-apps`.
+- Consume: the verified Cinnamon 6.6.9 applet edits and Zeitgeist helper from the development workspace.
 
 - [ ] Write tests asserting exact insertion of the import, refresh flag, menu refresh, Recent Applications category, and category-preservation changes for a 6.6.9 source fixture.
 - [ ] Write tests that unsupported version, missing/duplicate anchor, and already-patched input throw without mutating source.

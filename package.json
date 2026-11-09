@@ -1,0 +1,16 @@
+{
+  "name": "cinnamon-menu-recent-apps",
+  "version": "0.1.0",
+  "description": "Add a Zeitgeist-backed Recent Applications section to Cinnamon's main menu.",
+  "license": "GPL-2.0-only",
+  "repository": {
+    "type": "git",
+    "url": "git+ssh://git@github.com/touficmamdouh/cinnamon-menu-recent-apps.git"
+  },
+  "scripts": {
+    "test": "node --test",
+    "check": "node bin/install.js --check",
+    "install-menu": "node bin/install.js",
+    "uninstall-menu": "node bin/uninstall.js"
+  }
+}
