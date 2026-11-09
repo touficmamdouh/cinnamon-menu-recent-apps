@@ -11,7 +11,13 @@ Adds a **Recent Applications** category to Cinnamon's built-in Main Menu. It rea
 
 ## Install
 
-Clone this repository, then run the non-modifying compatibility check:
+One-command install from the published branch:
+
+```sh
+git clone --depth 1 --branch feature/recent-applications-installer https://github.com/touficmamdouh/cinnamon-menu-recent-apps.git "$HOME/.local/share/cinnamon-menu-recent-apps" && npm --prefix "$HOME/.local/share/cinnamon-menu-recent-apps" run install-menu
+```
+
+The clone is kept under `~/.local/share/cinnamon-menu-recent-apps` so the uninstaller can use the same package files later. If you prefer, clone the repository manually and run the non-modifying compatibility check first:
 
 ```sh
 npm run check
@@ -32,7 +38,7 @@ Open the Main Menu and choose **Recent Applications**. To make Cinnamon reload t
 Run:
 
 ```sh
-npm run uninstall-menu
+npm --prefix "$HOME/.local/share/cinnamon-menu-recent-apps" run uninstall-menu
 ```
 
 The uninstaller restores the newest verified backup and removes only the helper file installed by this package. It keeps the backup after restoration. If the menu or helper changed after installation, it refuses to overwrite those changes.
