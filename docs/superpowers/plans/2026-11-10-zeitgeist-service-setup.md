@@ -32,19 +32,20 @@
 
 **Files:**
 - Create: `src/zeitgeistSetup.js`
+- Create: `src/installPreflight.js`
 - Create: `test/zeitgeistSetup.test.js`
+- Create: `test/installPreflight.test.js`
 - Modify: `bin/install.js`
-- Modify: `package.json`
 - Modify: `README.md`
 
 **Interfaces:**
-- Produce: `ensureZeitgeist({ commandRunner, osReleasePath, fsApi }) -> void`; it probes D-Bus, conditionally installs the package, starts the user service, verifies readiness, or throws before system menu changes.
-- Consume: the existing installer flow; call `ensureZeitgeist()` before `runAsRoot()` and `installRecentApps()`.
+- Produce: `ensureZeitgeist({ commandRunner, osReleasePath, fsApi }) -> void`; it probes D-Bus, conditionally installs the package, starts the user service, verifies readiness, or throws before system menu changes. `prepareInstallation({ source, helperPath, ensureService, fsApi })` validates source, rechecks Zeitgeist on repeat installs, and identifies a complete prior installation.
+- Consume: the existing installer flow; call `prepareInstallation()` before `runAsRoot()` and `installRecentApps()`.
 
-- [ ] Write tests for already-active service, missing package/install path, installed-but-stopped service, unsupported distribution, failed service startup, and D-Bus verification failure using an injected command runner.
+- [ ] Write tests for already-active service, missing package/install path, installed-but-stopped service, unsupported distribution, failed service startup, D-Bus verification failure, and re-running after an installation using injected command runners.
 - [ ] Run `node --test test/zeitgeistSetup.test.js`; confirm the expected missing-module/API failures.
 - [ ] Implement D-Bus probing, Debian-family detection from os-release, `dpkg-query` package detection, privileged `apt-get install -y zeitgeist` when absent, `systemctl --user start zeitgeist.service`, and final D-Bus verification.
-- [ ] Call `ensureZeitgeist()` before any system applet write; keep Zeitgeist startup in the user's session.
+- [ ] Call `prepareInstallation()` before any system applet write; recheck Zeitgeist on an already-patched menu, keep service startup in the user's session, and refuse partial installs.
 - [ ] Document automatic package/service setup, first-run history behavior, and failure output.
 - [ ] Run `npm test` and JavaScript syntax checks; expect all tests to pass.
 - [ ] Review and publish the change on `feature/recent-applications-installer`.

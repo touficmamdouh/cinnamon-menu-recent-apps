@@ -29,7 +29,7 @@ Install the enhancement:
 npm run install-menu
 ```
 
-The installer checks the Main Menu source structure and confirms Zeitgeist responds over the user's D-Bus session before changing the menu. If Zeitgeist is missing on Debian-family systems, it asks for authorization to install the `zeitgeist` package, then starts and verifies `zeitgeist.service`. It next requests authorization to update the Cinnamon applet and creates a timestamped backup beside it. If service setup or source validation fails, the menu files are left untouched. On other distributions, install and start Zeitgeist with that distribution's package manager before running the installer.
+The installer checks the Main Menu source structure and confirms Zeitgeist responds over the user's D-Bus session before changing the menu. If Zeitgeist is missing on Debian-family systems, it asks for authorization to install the `zeitgeist` package, then starts and verifies `zeitgeist.service`. It next requests authorization to update the Cinnamon applet and creates a timestamped backup beside it. If service setup or source validation fails, the menu files are left untouched. Running the installer again on an already-patched menu rechecks and starts Zeitgeist without replacing the menu. On other distributions, install and start Zeitgeist with that distribution's package manager before running the installer.
 
 Zeitgeist history starts empty on a new installation. Open a few applications once; they will appear after Zeitgeist records those launches.
 

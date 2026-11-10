@@ -6,6 +6,7 @@ const { installRecentApps } = require('../src/systemInstall');
 const { patchApplet } = require('../src/appletPatch');
 const { ensureZeitgeist } = require('../src/zeitgeistSetup');
 const { isPrivilegedSystemRun } = require('../src/installMode');
+const { prepareInstallation } = require('../src/installPreflight');
 
 const appletDir = '/usr/share/cinnamon/applets/menu@cinnamon.org';
 const helperSourcePath = path.join(__dirname, '..', 'files', 'recentApps.js');
@@ -38,8 +39,15 @@ try {
         if (typeof process.getuid === 'function' && process.getuid() === 0)
             throw new Error('Run the installer as your desktop user, without sudo. It will request authorization when needed.');
         const fs = require('node:fs');
-        patchApplet(fs.readFileSync(appletPath, 'utf8'));
-        ensureZeitgeist();
+        const prepared = prepareInstallation({
+            source: fs.readFileSync(appletPath, 'utf8'),
+            helperPath: path.join(appletDir, 'recentApps.js'),
+            ensureService: ensureZeitgeist
+        });
+        if (prepared.alreadyInstalled) {
+            process.stdout.write('Recent Applications is already installed; Zeitgeist is ready.\n');
+            process.exit(0);
+        }
     }
 
     runAsRoot();
