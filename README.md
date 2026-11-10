@@ -5,7 +5,7 @@ Adds a **Recent Applications** category to Cinnamon's built-in Main Menu. It rea
 ## Compatibility
 
 - No Cinnamon version-number whitelist. The installer applies the patch when the installed Main Menu source contains the required anchors.
-- Zeitgeist must be installed and its session service running for recent applications to appear.
+- On Debian-family systems, the installer installs `zeitgeist` if missing and starts the user's `zeitgeist.service` before modifying the menu.
 - Node.js is used only by the installer and tests; no Node package dependencies are required.
 - Linux desktop with `pkexec` available for system file access.
 
@@ -29,7 +29,9 @@ Install the enhancement:
 npm run install-menu
 ```
 
-The installer asks the desktop authorization agent for administrator permission. It validates the Main Menu source anchors before changing anything. It creates a timestamped backup beside the applet, then installs the Zeitgeist helper and updates the menu. Cinnamon versions with a different menu structure are refused safely rather than patched blindly.
+The installer checks the Main Menu source structure and confirms Zeitgeist responds over the user's D-Bus session before changing the menu. If Zeitgeist is missing on Debian-family systems, it asks for authorization to install the `zeitgeist` package, then starts and verifies `zeitgeist.service`. It next requests authorization to update the Cinnamon applet and creates a timestamped backup beside it. If service setup or source validation fails, the menu files are left untouched. On other distributions, install and start Zeitgeist with that distribution's package manager before running the installer.
+
+Zeitgeist history starts empty on a new installation. Open a few applications once; they will appear after Zeitgeist records those launches.
 
 Open the Main Menu and choose **Recent Applications**. To make Cinnamon reload the updated menu without logging out, restart the menu applet from Cinnamon's applet settings or log out and back in.
 
@@ -59,7 +61,7 @@ To recover manually, copy the desired backup over `applet.js` as an administrato
 npm test
 ```
 
-Tests use temporary directories and do not alter the installed Cinnamon menu. They cover the patch transformation, compatibility checks, backup and permission preservation, install rollback, restore behavior, and protection of local changes.
+Tests use temporary directories and do not alter the installed Cinnamon menu or system services. They cover the patch transformation, Zeitgeist setup paths, backup and permission preservation, install rollback, restore behavior, and protection of local changes.
 
 ## License
 

@@ -1,0 +1,7 @@
+# Zeitgeist Service Setup — Design
+
+- **Intent:** Ensure the Recent Applications category has a working activity source on the user's Linux Mint Cinnamon 6.6.7 computer, instead of displaying an empty list because Zeitgeist is missing or stopped.
+- **Selected approach:** In the unprivileged installer process, check whether the Zeitgeist D-Bus service responds. If unavailable, verify that the host is a Debian-family system, install the fixed `zeitgeist` package through `pkexec apt-get install -y zeitgeist` only when it is absent, start the user-level `zeitgeist.service` with `systemctl --user`, and verify the D-Bus endpoint before patching the menu.
+- **Alternatives:** Do not install or start anything automatically (leaves the reported failure unresolved); support arbitrary package managers (broader code and unverified package/service names). The Mint/apt/systemd path is selected because it matches the target system and the package name and unit are confirmed in this environment.
+- **Safety:** Never run `apt` or the user service as root without the appropriate authorization/context. If the system is not Debian-family, required tools are absent, or the service cannot be verified, stop before changing the applet and show a precise error. Do not erase or create Zeitgeist history; an empty history remains a valid empty list.
+- **Verification:** Add tests for running service, missing service/package installation, stopped service startup, and failure preventing applet writes; confirm Mint 6.6.7 source passes existing anchor validation.
